@@ -33,7 +33,7 @@
 #include "G4QuadrangularFacet.hh"
 #include "G4Tubs.hh"
 
-//#include "detector.hh"
+#include "detector.hh"
 
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -69,6 +69,8 @@ private:
     G4int nRows, nCols, two;
 
     G4bool isCherenkov, isScintillator, isTOF, isAtmosphere;
+        virtual void ConstructSDandField(); // SD==Sensitive Detector
+
 };
 
 #endif

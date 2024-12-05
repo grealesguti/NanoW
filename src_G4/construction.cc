@@ -6,6 +6,12 @@ MyDetectorConstruction::MyDetectorConstruction()
 MyDetectorConstruction::~MyDetectorConstruction()
 {}
 
+void MyDetectorConstruction::ConstructSDandField()
+{
+	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector");
+	logicDetector->SetSensitiveDetector(sensDet);
+}
+
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
 {
 	//////////////////
@@ -159,7 +165,8 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	);
 
 	//////////////////
-	// aSi top layer
+	// aSi top single layer
+	/*
 	G4double aSi_z = 3 * nm;
 	G4Box *solid_aSitoplayer = new G4Box("solid_aSitoplayer", Sensor_x/2, Sensor_y/2, aSi_z/2);
 	G4LogicalVolume *logic_aSitoplayer = new G4LogicalVolume(solid_aSitoplayer, aSiMat, "logic_aSitoplayer");
@@ -172,7 +179,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		false,
 		0,
 		true
-	);
+	);*/
 
 	//////////////////
 	// Sensor
@@ -202,22 +209,39 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 
 		// Create a strip solid with specified dimensions
 		G4Box *solid_strip = new G4Box("solid_strip_" + std::to_string(i), Sensor_x * 0.9 / 2, strip_thickness / 2, wire_z * mm / 2);
+		G4Box *solid_aSistrip = new G4Box("solid_strip_" + std::to_string(i), Sensor_x * 0.9 / 2, strip_thickness / 2, wire_z * mm / 2);
 
 		// Create the logical volume for the strip
-		G4LogicalVolume *logic_strip = new G4LogicalVolume(solid_strip, WSiMat, "logic_strip_" + std::to_string(i));
+		logicDetector = new G4LogicalVolume(solid_strip, WSiMat, "logic_strip_" + std::to_string(i));
+		G4LogicalVolume *logic_aSiStrip = new G4LogicalVolume(solid_strip, aSiMat, "logic_strip_" + std::to_string(i));
 
 		// Place each strip with translation in the y-axis
 		new G4PVPlacement(
 			0, // No rotation
-			G4ThreeVector(0., strip_y_pos, 0.), // Translation in y for each strip
-			logic_strip,
+			G4ThreeVector(0, strip_y_pos, +SiO2_z/2-wire_z / 2), // Translation in y for each strip
+			logicDetector,
 			"phys_strip_" + std::to_string(i),
 			logic_SiO2toplayer,
 			false,
 			i, // Unique copy number for each strip
 			true
 		);
+		
+
+		// Place each strip with translation in the y-axis
+		new G4PVPlacement(
+			0, // No rotation
+			G4ThreeVector(0, strip_y_pos, +SiO2_z/2-wire_z-wire_z/2), // Translation in y for each strip
+			logic_aSiStrip,
+			"phys_aSistrip_" + std::to_string(i),
+			logic_SiO2toplayer,
+			false,
+			i, // Unique copy number for each strip
+			true
+		);		
 	}
+		
+	ConstructSDandField(); 
 		
     
     return physWorld;
