@@ -51,11 +51,15 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
 
     struct stat st;
 
+    // Create the "Results" directory if it doesn't exist
+    if (stat("Results", &st) == -1) {
         printf("Creating directory \"Results\" since it doesn't exist.\n");
         mkdir("Results", 0700);
+    }
 
-    // Creation of Output file
-    man->OpenFile("Results/Output.root");
+    // Creation of Output file using the OutputName from MainArgs
+    std::string outputFileName = "Results/" + OutputName + ".root"; // Use OutputName for the ROOT file name
+    man->OpenFile(outputFileName.c_str());
 
 }
 void MyRunAction::EndOfRunAction(const G4Run* run)
@@ -63,11 +67,12 @@ void MyRunAction::EndOfRunAction(const G4Run* run)
     G4AnalysisManager* man = G4AnalysisManager::Instance();
 
     // Retrieve data from the sensitive detector (this assumes your sensitive detector is properly set up)
-    MySensitiveDetector* sensDetector = (MySensitiveDetector*)G4SDManager::GetSDMpointer()->FindSensitiveDetector("MySensitiveDetector");
+    //MySensitiveDetector* sensDetector = (MySensitiveDetector*)G4SDManager::GetSDMpointer()->FindSensitiveDetector("MySensitiveDetector");
 
-    if (sensDetector) {
-        // Iterate over all hit records and store in ROOT
-        for (auto& hit : sensDetector->hitRecords) {
+    if (PassArgs) {
+        // Iterate over all hit records and store them in the ROOT file
+        const auto& hitRecords = PassArgs->GetHitRecords(); // Add a getter to MyG4Args for hitRecords
+        for (const auto& hit : hitRecords) {
             man->FillNtupleDColumn(0, 0, hit.energyDeposit);  // Energy deposit
             man->FillNtupleDColumn(0, 1, hit.position.x());   // Position X
             man->FillNtupleDColumn(0, 2, hit.position.y());   // Position Y
@@ -77,23 +82,18 @@ void MyRunAction::EndOfRunAction(const G4Run* run)
             man->AddNtupleRow(0);
         }
 
-        // Optionally store total energy by particle type
-        for (auto& energyEntry : sensDetector->totalEnergyByParticle) {
-            G4cout << "Total energy deposited by " << energyEntry.first << ": " << energyEntry.second / MeV << " MeV" << G4endl;
-        }
-        
-        // Optionally store total energy by particle type and print to screen
+        // Optionally store total energy by particle type and print to the screen
+        const auto& totalEnergyByParticle = PassArgs->GetTotalEnergyByParticle(); // Add a getter to MyG4Args for totalEnergyByParticle
         G4cout << "Total energy deposited by each particle type:" << G4endl;
-        for (auto& energyEntry : sensDetector->totalEnergyByParticle) {
+        for (const auto& energyEntry : totalEnergyByParticle) {
             G4cout << "Particle type: " << energyEntry.first << ", "
                    << "Total energy: " << energyEntry.second / MeV << " MeV" << G4endl;
         }
-        
     } else {
-        // If no sensitive detector is found, print an error message
-        G4cout << "Error: Sensitive detector 'MySensitiveDetector' not found!" << G4endl;
+        // If MyG4Args is not accessible, print an error message
+        G4cout << "Error: MyG4Args instance not found or accessible!" << G4endl;
     }
-
+   
 
     man->Write();// Write out the root file to avoid damaging it
     man->CloseFile();

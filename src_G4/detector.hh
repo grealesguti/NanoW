@@ -24,20 +24,10 @@ public:
     MySensitiveDetector(G4String name, MyG4Args*);
     // Destructor
     ~MySensitiveDetector();
-
-    // Store energy deposition, position, time, and particle type for each hit
-    struct HitData {
-        G4double energyDeposit;
-        G4ThreeVector position;
-        G4double time;
-        G4String particleType;
-    };
     
-    // Store total energy deposited by each particle type
-    std::unordered_map<G4String, G4double, G4StringHasher> totalEnergyByParticle;
+  
 
-    // Vector to store individual hit data
-    std::vector<HitData> hitRecords;  
+    
 private:
     // ProcessHits method is called for each step in the detector
     virtual G4bool ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist);

@@ -2,8 +2,7 @@
 
 MySensitiveDetector::MySensitiveDetector(G4String name, MyG4Args *MainArgs) : G4VSensitiveDetector(name)
 {
-	PassArgs=MainArgs;
-
+			PassArgs=MainArgs;
 		    G4cout << "### Sensitive detector '" << name << "' is being created!" << G4endl;
 
 }
@@ -34,28 +33,21 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
         G4String particleType = particle->GetParticleName();
         
         // Store the hit data
+        /*
         HitData hit;
         hit.energyDeposit = edep;
         hit.position = position;
         hit.time = time;
         hit.particleType = particleType;
-
+        */
         // Add the hit data to the vector of recorded hits
-        hitRecords.push_back(hit);
+        //hitRecords.push_back(hit);
+		PassArgs->AddHitRecord(edep, position, time, particleType);
 
         // Accumulate the energy deposited by each particle type
-        totalEnergyByParticle[particleType] += edep;
-
-        // Optionally, print hit data for debugging
-        G4cout << "Hit recorded: " 
-               << "Energy Deposit: " << edep / MeV << " MeV, "
-               << "Position: (" << position.x() / mm << ", " << position.y() / mm << ", " << position.z() / mm << ") mm, "
-               << "Time: " << time / ns << " ns, "
-               << "Particle Type: " << particleType << G4endl;
-
-        // Print the total energy deposited by this particle type so far (for debugging)
-        G4cout << "Total energy deposited by " << particleType 
-               << ": " << totalEnergyByParticle[particleType] / MeV << " MeV" << G4endl;
+        //totalEnergyByParticle[particleType] += edep;
+		PassArgs->AddToEnergyByParticle(particleType, edep);
+		
     }
     
     return true;
