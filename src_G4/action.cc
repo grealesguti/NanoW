@@ -1,8 +1,11 @@
 #include "action.hh"
 
-MyActionInitialization::MyActionInitialization()
-{}
-
+MyActionInitialization:: MyActionInitialization(MyG4Args *MainArgs)
+{
+// Saving output name
+PassArgs=MainArgs;
+OutputName=MainArgs->GetOutName();
+}
 MyActionInitialization::~MyActionInitialization()
 {}
 
@@ -12,6 +15,6 @@ void MyActionInitialization::Build() const
     SetUserAction(generator);
     
     // Actions performed at begining and end of a run
-    MyRunAction *runAction = new MyRunAction("Output");
+    MyRunAction *runAction = new MyRunAction(PassArgs);
     SetUserAction(runAction);
 }

@@ -2,9 +2,11 @@
 
 G4simulation::G4simulation(int mainargc,char** mainargv)
 {
-     G4RunManager *runManager = new G4RunManager();
+     G4RunManager *runManager = new G4RunManager();	
+	 G4Args = new MyG4Args(mainargc, mainargv);
+
     
-    runManager->SetUserInitialization(new MyDetectorConstruction());
+    runManager->SetUserInitialization(new MyDetectorConstruction(G4Args));
     runManager->SetUserInitialization(new MyPhysicsList());
     //runManager->SetUserInitialization(new MicroElecPhysics());
     /*
@@ -13,7 +15,7 @@ G4simulation::G4simulation(int mainargc,char** mainargv)
 if you uncomment one line (/microelectronics/det/setMat) into the .mac file.  
      */
     
-    runManager->SetUserInitialization(new MyActionInitialization());
+    runManager->SetUserInitialization(new MyActionInitialization(G4Args));
     
     runManager->Initialize();
 

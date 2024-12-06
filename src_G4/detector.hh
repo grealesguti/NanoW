@@ -14,21 +14,14 @@
 #include "G4Track.hh" // Class for track information
 #include "G4ThreeVector.hh" // Class for 3D vector operations
 #include <unordered_map> // For storing energy deposited by each particle type
-
-// Custom hash function for G4String (needed for unordered_map)
-struct G4StringHasher {
-    std::size_t operator()(const G4String &key) const {
-        // Hashing based on the string data
-        return std::hash<std::string>()(key.c_str());
-    }
-};
+#include "G4Args.hh"
 
 // Declare the MySensitiveDetector class, inheriting from G4VSensitiveDetector
 class MySensitiveDetector : public G4VSensitiveDetector
 {
 public:
     // Constructor takes a G4String for the detector name
-    MySensitiveDetector(G4String name);
+    MySensitiveDetector(G4String name, MyG4Args*);
     // Destructor
     ~MySensitiveDetector();
 
@@ -49,6 +42,7 @@ private:
     // ProcessHits method is called for each step in the detector
     virtual G4bool ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist);
 
+    MyG4Args* PassArgs;
 
 };
 

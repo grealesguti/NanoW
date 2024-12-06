@@ -25,7 +25,7 @@ class MyRunAction : public G4UserRunAction
 {
 public:
     // Constructor takes a G4String for command and a pointer to MyG4Args, presumably for configuration
-    MyRunAction(G4String);
+    MyRunAction(MyG4Args*);
     // Destructor
     ~MyRunAction();
 
@@ -40,7 +40,7 @@ private:
     G4String OutputName;
 
     // Pointer to MyG4Args for passing arguments
-    //MyG4Args* PassArgs;
+    MyG4Args* PassArgs;
 };
 
 #endif // RUN_HH

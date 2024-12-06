@@ -4,16 +4,16 @@
 #include <unistd.h>
 #include <stdio.h>
 
-MyRunAction :: MyRunAction(G4String OutName)
+MyRunAction :: MyRunAction(MyG4Args *MainArgs)
 { // Constructor
     
-    OutputName="Outputname";
+    OutputName=MainArgs->GetOutName();
+    PassArgs = MainArgs;
 
     G4AnalysisManager *man = G4AnalysisManager::Instance();
 
     // Content of output.root (tuples created only once in the constructor)
             man->CreateNtuple("Hits","Hits");   
-            
     // Energy deposition, position (x, y, z), time, particle type
     man->CreateNtupleDColumn("EnergyDeposit");
     man->CreateNtupleDColumn("PositionX");

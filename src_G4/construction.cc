@@ -1,14 +1,16 @@
 #include "construction.hh"
 
-MyDetectorConstruction::MyDetectorConstruction()
-{}
+MyDetectorConstruction::MyDetectorConstruction(MyG4Args *MainArgs)
+{
+	PassArgs = MainArgs;
+	}
 
 MyDetectorConstruction::~MyDetectorConstruction()
 {}
 
 void MyDetectorConstruction::ConstructSDandField()
 {
-	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector");
+	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector",PassArgs);
 	logicDetector->SetSensitiveDetector(sensDet);
 }
 

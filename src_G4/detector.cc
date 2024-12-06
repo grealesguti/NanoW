@@ -1,8 +1,9 @@
 #include "detector.hh"
 
-MySensitiveDetector::MySensitiveDetector(G4String name) : G4VSensitiveDetector(name)
+MySensitiveDetector::MySensitiveDetector(G4String name, MyG4Args *MainArgs) : G4VSensitiveDetector(name)
 {
-	
+	PassArgs=MainArgs;
+
 		    G4cout << "### Sensitive detector '" << name << "' is being created!" << G4endl;
 
 }

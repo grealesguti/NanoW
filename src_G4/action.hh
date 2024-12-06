@@ -5,15 +5,20 @@
 
 #include "generator.hh"
 #include "run.hh"
-
+#include "G4Args.hh"
 
 class MyActionInitialization : public G4VUserActionInitialization
 {
 public:
-    MyActionInitialization();
+    MyActionInitialization(MyG4Args*);
     ~MyActionInitialization();
     
     virtual void Build() const;
+private:
+    // String to specify the output name
+    G4String OutputName;
+    // Pointer to MyG4Args for passing arguments
+    MyG4Args* PassArgs;
 };
 
 #endif

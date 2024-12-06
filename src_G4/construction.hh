@@ -27,7 +27,7 @@
 //#include "event.hh"
 #include "G4Trap.hh"
 #include "G4UnionSolid.hh"
-//#include "G4Args.hh"
+#include "G4Args.hh"
 #include "G4TriangularFacet.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4QuadrangularFacet.hh"
@@ -38,7 +38,7 @@
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-    MyDetectorConstruction();
+    MyDetectorConstruction(MyG4Args*);
     ~MyDetectorConstruction();
 
     G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
@@ -70,6 +70,7 @@ private:
 
     G4bool isCherenkov, isScintillator, isTOF, isAtmosphere;
         virtual void ConstructSDandField(); // SD==Sensitive Detector
+    MyG4Args* PassArgs;
 
 };
 

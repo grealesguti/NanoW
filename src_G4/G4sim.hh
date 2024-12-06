@@ -18,7 +18,7 @@
 #include <cstdlib> // For standard library functions
 #include <unistd.h> // For exit() function
 #include "MicroElecPhysics.hh"
-
+#include "G4Args.hh"
 
 // Declare the G4simulation class
 // This class defines each run. Prepared to run the visualization module!!!
@@ -32,6 +32,10 @@ public:
 
 
 private:
+
+    MyG4Args *G4Args;
+
+
 };    
 
 #endif
