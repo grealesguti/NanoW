@@ -64,6 +64,8 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
 }
 void MyRunAction::EndOfRunAction(const G4Run* run)
 {
+        G4cout << "### END OF RUN" << G4endl;
+
     G4AnalysisManager* man = G4AnalysisManager::Instance();
 
     // Retrieve data from the sensitive detector (this assumes your sensitive detector is properly set up)
@@ -93,7 +95,6 @@ void MyRunAction::EndOfRunAction(const G4Run* run)
         // If MyG4Args is not accessible, print an error message
         G4cout << "Error: MyG4Args instance not found or accessible!" << G4endl;
     }
-   
 
     man->Write();// Write out the root file to avoid damaging it
     man->CloseFile();

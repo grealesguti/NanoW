@@ -11,7 +11,7 @@ MyDetectorConstruction::~MyDetectorConstruction()
 void MyDetectorConstruction::ConstructSDandField()
 {
 	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector",PassArgs);
-	logicDetector->SetSensitiveDetector(sensDet);
+	logicsubstrate->SetSensitiveDetector(sensDet);
 }
 
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
@@ -63,6 +63,34 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		mptAl->AddProperty("ABSLENGTH", energyAl, ABSAl, 2);
 		AlMat->SetMaterialPropertiesTable(mptAl);
    
+  // https://refractiveindex.info/?shelf=main&book=Si3N4&page=Kischkat
+  // https://refractiveindex.info/?shelf=main&book=Si3N4&page=Luke
+	G4cout << "### - Define Silicon Nitride (Si3N4)" << G4endl;
+	// Define the material using the NIST database or creating a custom material
+	G4Material* Si3N4Mat = new G4Material("SiliconNitride", 3.44*g/cm3, 2);
+	Si3N4Mat->AddElement(nist->FindOrBuildElement("Si"), 3);
+	Si3N4Mat->AddElement(nist->FindOrBuildElement("N"), 4);
+	// Define optical properties
+	G4MaterialPropertiesTable* mptSi3N4 = new G4MaterialPropertiesTable();
+	G4double energySi3N4[2] = {400*eV, 1000*eV}; // Define photon energy range
+	//G4double rindexSi3N4[2] = {2.05, 2.05};      // Example refractive index values
+	G4double absLengthSi3N4[2] = {4.08*mm, 4.08*mm}; // Absorption length in mm
+	// Define photon energies in eV
+	const G4int numEntries = 10;
+	G4double photonEnergy[numEntries] = {
+		4.465*eV, 3.79*eV, 3.115*eV, 2.647*eV, 2.18*eV,
+		1.712*eV, 1.245*eV, 0.8294*eV, 0.5178*eV, 0.3619*eV};
+	// Corresponding refractive indices
+	G4double refractiveIndex[numEntries] = {
+		1.8721213170359, 1.9110346794217, 1.943231277958, 1.9619062604624, 1.9778699738446,
+		1.9917473810267, 2.0050993473208, 2.0222778887066, 2.0590472271639, 2.1244526847835};
+	// Add properties to the material properties table
+	mptSi3N4->AddProperty("RINDEX", photonEnergy, refractiveIndex, numEntries);
+	mptSi3N4->AddProperty("ABSLENGTH", energySi3N4, absLengthSi3N4, 2);
+	// Assign the properties table to the material
+	Si3N4Mat->SetMaterialPropertiesTable(mptSi3N4);
+	G4cout << "### - Silicon Nitride (Si3N4) defined" << G4endl;
+
     
 	G4cout<< " ### - Define a-Si" <<G4endl;    
     // Define Amorphous Silicon (a-Si)
@@ -131,6 +159,10 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	logicCu2 = new G4LogicalVolume(solidCu2, CuMat, "logicCu2");
 	physCu2 = new G4PVPlacement(0,G4ThreeVector(0,3.,2),logicCu2,"physCu2",logicWorld,false,0,true);
 	
+	
+	G4UserLimits* userLimits = new G4UserLimits();
+	userLimits->SetMaxAllowedStep(0.1 * mm);
+		
 	//////////////////
 	// Substrate 
 	G4double Sensor_z = -1 *mm;
@@ -138,7 +170,8 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4double Sensor_x = 1 * mm;
 	G4double Sensor_y = 1 * mm;
 	G4Box *solidsubstrate = new G4Box("solidsubstrate", Sensor_x/2, Sensor_y/2, Substrate_z/2);
-	G4LogicalVolume *logicsubstrate = new G4LogicalVolume(solidsubstrate, SiO2, "logicsubstrate");
+	logicsubstrate = new G4LogicalVolume(solidsubstrate, Si3N4Mat, "logicsubstrate");
+	logicsubstrate->SetUserLimits(userLimits);
 	G4VPhysicalVolume *physsubstrate = new G4PVPlacement(
 		0,
 		G4ThreeVector(0., 0., Sensor_z-Substrate_z/2),
@@ -155,6 +188,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4double SiO2_z = 40 * nm;
 	G4Box *solid_SiO2toplayer = new G4Box("solid_SiO2toplayer", Sensor_x*mm/2, Sensor_y*mm/2, SiO2_z*mm/2);
 	G4LogicalVolume *logic_SiO2toplayer = new G4LogicalVolume(solid_SiO2toplayer, SiO2, "logic_SiO2toplayer");
+	logic_SiO2toplayer->SetUserLimits(userLimits);
 	G4VPhysicalVolume *phys_SiO2toplayer = new G4PVPlacement(
 		0,
 		G4ThreeVector(0., 0., Sensor_z-Substrate_z-SiO2_z/2),
@@ -204,7 +238,9 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	);
 	*/
 	G4int num_strips = 240; // Number of strips
-
+	G4UserLimits* userLimits1 = new G4UserLimits();
+	userLimits1->SetMaxAllowedStep(0.05 * nm);
+	
 	for (G4int i = 0; i < num_strips; i++) {
 		// Position along y for each strip, considering the thickness and the spacing
 		G4double strip_y_pos = -(Sensor_y * 0.9 / 2) + i * (strip_thickness + strip_spacing); 
@@ -216,7 +252,9 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		// Create the logical volume for the strip
 		logicDetector = new G4LogicalVolume(solid_strip, WSiMat, "logic_strip_" + std::to_string(i));
 		G4LogicalVolume *logic_aSiStrip = new G4LogicalVolume(solid_strip, aSiMat, "logic_strip_" + std::to_string(i));
-
+		
+		logicDetector->SetUserLimits(userLimits1);
+		logic_aSiStrip->SetUserLimits(userLimits1);
 		// Place each strip with translation in the y-axis
 		new G4PVPlacement(
 			0, // No rotation
@@ -244,7 +282,18 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	}
 		
 	ConstructSDandField(); 
-		
+
+    // Define step size limit (1 nm)
+    //G4double maxStep = 0.1 * nm;
+    //G4UserLimits* userLimits = new G4UserLimits(maxStep);
+    //logicDetector->SetUserLimits(userLimits);
+    
+    //maxStep = 0.1 * mm;
+    //userLimits = new G4UserLimits(maxStep);
+    //logicsubstrate->SetUserLimits(userLimits);
+    
+
+    
     
     return physWorld;
 }

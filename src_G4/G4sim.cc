@@ -41,6 +41,17 @@ if you uncomment one line (/microelectronics/det/setMat) into the .mac file.
 	// Add the coordinate axes (e.g., with length 1 meter)
 	UImanager->ApplyCommand("/vis/scene/add/axes");
 
+
+	// --- Additional commands to plot dots at step endpoints ---
+	UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge generic-0");
+	UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setDrawStepPts true");
+	UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsSize 10");
+
+// Example for a conditionally colored step point
+UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargePos red");   // Positive charge -> red
+UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeNeg blue");   // Negative charge -> blue
+UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeZero green");  // Zero charge -> green
+
     
     ui->SessionStart();
 

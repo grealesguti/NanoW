@@ -34,6 +34,8 @@
 #include "G4Tubs.hh"
 
 #include "detector.hh"
+#include "G4UserLimits.hh"
+#include "G4SystemOfUnits.hh"
 
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -51,7 +53,7 @@ public:
 
 private:
     G4Box *solidWorld, *solidRadiator, *solidDetector, *solidScintillator, *solidAir, *solidCu1, *solidCu2, *solidAl1, *solidAl2;
-    G4LogicalVolume *logicWorld, *logicRadiator, *logicDetector, *logicScintillator, *logicAir[10], *logicCu1, *logicCu2, *logicAl1, *logicAl2;
+    G4LogicalVolume *logicWorld, *logicRadiator, *logicDetector, *logicScintillator, *logicAir[10], *logicCu1, *logicCu2, *logicAl1, *logicAl2, *logicsubstrate;
     G4VPhysicalVolume *physWorld, *physDetector, *physRadiator, *physScintillator, *physAir[10], *physCu1, *physCu2, *physAl1, *physAl2;
 
     G4OpticalSurface *mirrorSurface;
