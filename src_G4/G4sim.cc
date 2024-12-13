@@ -29,7 +29,7 @@ if you uncomment one line (/microelectronics/det/setMat) into the .mac file.
 	// Open the visualization
 	UImanager->ApplyCommand("/vis/open OGL");
 	// Set the viewpoint
-	UImanager->ApplyCommand("/vis/viewer/set/viewpointVector 1 0 0");
+	UImanager->ApplyCommand("/vis/viewer/set/viewpointVector -1 0 0");
 	// Draw the volumes
 	UImanager->ApplyCommand("/vis/drawVolume");
 	// Set auto-refresh to true

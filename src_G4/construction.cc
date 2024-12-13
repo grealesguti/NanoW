@@ -10,8 +10,7 @@ MyDetectorConstruction::~MyDetectorConstruction()
 
 void MyDetectorConstruction::ConstructSDandField()
 {
-	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector",PassArgs);
-	logicsubstrate->SetSensitiveDetector(sensDet);
+
 }
 
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
@@ -241,6 +240,8 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4UserLimits* userLimits1 = new G4UserLimits();
 	userLimits1->SetMaxAllowedStep(0.05 * nm);
 	
+	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector",PassArgs);
+	
 	for (G4int i = 0; i < num_strips; i++) {
 		// Position along y for each strip, considering the thickness and the spacing
 		G4double strip_y_pos = -(Sensor_y * 0.9 / 2) + i * (strip_thickness + strip_spacing); 
@@ -255,6 +256,9 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		
 		logicDetector->SetUserLimits(userLimits1);
 		logic_aSiStrip->SetUserLimits(userLimits1);
+		
+		logicDetector->SetSensitiveDetector(sensDet);
+
 		// Place each strip with translation in the y-axis
 		new G4PVPlacement(
 			0, // No rotation
@@ -280,8 +284,11 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 			true
 		);		
 	}
+	
+
+	
 		
-	ConstructSDandField(); 
+	//ConstructSDandField(); 
 
     // Define step size limit (1 nm)
     //G4double maxStep = 0.1 * nm;
