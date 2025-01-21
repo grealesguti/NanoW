@@ -21,6 +21,13 @@ MyG4Args::MyG4Args(int mainargc, char** mainargv) {
                 exit(EXIT_FAILURE);
             }
         }
+	   // Check for "-random" argument to activate random particle generator location
+		if (strcmp(mainargv[j], "-rndgun") == 0) {
+			randomGunLocation = true;
+			G4cout << "### Random particle location activated." << G4endl;
+		}
+			
+        
     }
 
     if (OutName.empty()) {

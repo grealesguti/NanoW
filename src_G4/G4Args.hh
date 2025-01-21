@@ -59,6 +59,8 @@ private:
     // Member variables
     G4String OutName;
     G4String MacName;    
+	bool randomGunLocation = false;  // Flag to determine if random location is activated
+
     std::unordered_map<G4String, G4double, G4StringHasher> totalEnergyByParticle; // Total energy by particle type
         std::unordered_map<G4int, std::unordered_map<G4String, G4double, G4StringHasher>> totalEnergyByParticleAndEvent; // Energy by event and particle type
     std::vector<HitData> hitRecords; // Vector to store hit data
