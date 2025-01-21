@@ -1,7 +1,8 @@
 #include "generator.hh"
 
-MyPrimaryGenerator::MyPrimaryGenerator()
+MyPrimaryGenerator::MyPrimaryGenerator(MyG4Args* MainArgs)
 {
+	//PassArgs=MainArgs;
     fParticleGun = new G4ParticleGun(1);
 }
 
@@ -36,7 +37,7 @@ void MyPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
     
     
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1)); // Direction -X
-    G4ThreeVector pos(0. * mm, 0. * m, -(20+10+20+3) * mm);
+    G4ThreeVector pos(0. * mm, 0. * m, -200 * mm);
     fParticleGun->SetParticlePosition(pos);
 		G4cout<< " ### Finshing Generator  " <<G4endl;    
     

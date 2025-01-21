@@ -11,7 +11,7 @@ MyActionInitialization::~MyActionInitialization()
 
 void MyActionInitialization::Build() const
 {
-    MyPrimaryGenerator *generator = new MyPrimaryGenerator();
+    MyPrimaryGenerator *generator = new MyPrimaryGenerator(PassArgs);
     SetUserAction(generator);
     
     // Actions performed at begining and end of a run

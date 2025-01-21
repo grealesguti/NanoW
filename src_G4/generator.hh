@@ -6,17 +6,18 @@
 #include "G4ParticleGun.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleTable.hh"
-
+#include "G4Args.hh"
 class MyPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
 public:
-    MyPrimaryGenerator();
+    MyPrimaryGenerator(MyG4Args*);
     ~MyPrimaryGenerator();
     
     virtual void GeneratePrimaries(G4Event*);
     
 private:
     G4ParticleGun *fParticleGun;
+	//MyG4Args* PassArgs;
 };
 
 #endif
