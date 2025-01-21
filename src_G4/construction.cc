@@ -42,6 +42,19 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		mptWorld->AddProperty("RINDEX", energyWorld, rindexWorld, 2);
 		AirMat->SetMaterialPropertiesTable(mptWorld);
     
+	G4cout << " ### - Define Vacuum" << G4endl;    
+	G4Material* VacuumMat = nist->FindOrBuildMaterial("G4_Galactic");
+
+	// For a vacuum, you may want to define properties like the refractive index (which is typically 1 for vacuum).
+	G4double energyVacuum[2] = {1.378*eV, 6.199*eV}; 
+	G4double rindexVacuum[2] = {1.0, 1.0};  // Refractive index for vacuum is 1
+	G4MaterialPropertiesTable* mptVacuum = new G4MaterialPropertiesTable();
+	mptVacuum->AddProperty("RINDEX", energyVacuum, rindexVacuum, 2);
+
+	// Set the material properties table for the vacuum material
+	VacuumMat->SetMaterialPropertiesTable(mptVacuum);
+
+    
 	G4cout<< " ### - Define Cu" <<G4endl;    
 	CuMat = nist->FindOrBuildMaterial("G4_Cu");
 		G4MaterialPropertiesTable *mptCu = new G4MaterialPropertiesTable();
@@ -127,27 +140,38 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 
 	//////////////////
 	// World //
-	G4double WorldL = ((0.02+0.01+0.02)*2+0.006);
+	G4double WorldL = 0.127*2.2; //((0.02+0.01+0.02)*2+0.006);
     G4Box *solidWorld = new G4Box("solidWorld", WorldL/2*m, WorldL/2*m, WorldL/2*m);
     //G4Box *solidWorld = new G4Box("solidWorld", ((0.02+0.01+0.02)*2+0.006)*m, ((0.02+0.01+0.02)*2+0.006)*m, ((0.02+0.01+0.02)*2+0.006)*m);
 
-    G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, AirMat, "logicWorld");
+    G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, VacuumMat, "logicWorld");
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
 	//////////////////
     // Define the radiator as a cylinder 
-    G4double innerRadius = 0.02 * m;  // Cylinder with no inner radius (solid cylinder)
-    G4double outerRadius = 0.03 * m; // Radius of the cylinder
+    G4double innerRadius = 0.114338 * m;  // Cylinder with no inner radius (solid cylinder)
+    G4double outerRadius = 0.114846* m; // Radius of the cylinder
+    //innerRadius = 0.05 * m;  // Cylinder with no inner radius (solid cylinder)
+    //outerRadius = 0.06* m; // Radius of the cylinder
+    
+    G4double innerRadiusShield2 = 0.124155 * m;  // Cylinder with no inner radius (solid cylinder)
+    G4double outerRadiusShield2 = 0.127* m; // Radius of the cylinder
+    
     G4double height = WorldL*m;    // Height of the cylinder
     G4double startAngle = 0.0 * deg; // Starting angle
     G4double spanningAngle = 360.0 * deg; // Full circle
     G4Tubs *solidRadiator = new G4Tubs("solidRadiator", innerRadius, outerRadius, height / 2, startAngle, spanningAngle);
+    G4Tubs *solidRadiatorShield2 = new G4Tubs("solidRadiator2", innerRadiusShield2, outerRadiusShield2, height / 2, startAngle, spanningAngle);
+
     G4LogicalVolume *logicRadiator = new G4LogicalVolume(solidRadiator, AlMat, "logicalRadiator");
+    G4LogicalVolume *logicRadiatorShield2 = new G4LogicalVolume(solidRadiatorShield2, AlMat, "logicalRadiator2");
+
     // Create a rotation matrix to rotate 90 degrees around the Z-axis
     G4RotationMatrix *rotation = new G4RotationMatrix();
     rotation->rotateX(90 * deg); // Rotate 90 degrees around the Y-axis
     // Place the cylinder with the rotation
     G4VPhysicalVolume *physRadiator = new G4PVPlacement(rotation, G4ThreeVector(0., 0., 0. * m), logicRadiator, "physRadiator", logicWorld, false, 0, true);
+    G4VPhysicalVolume *physRadiator2 = new G4PVPlacement(rotation, G4ThreeVector(0., 0., 0. * m), logicRadiatorShield2, "physRadiator2", logicWorld, false, 0, true);
 
 	//////////////////
 	// Copper holder

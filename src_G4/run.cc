@@ -60,16 +60,18 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
     // Creation of Output file using the OutputName from MainArgs
     std::string outputFileName = "Results/" + OutputName + ".root"; // Use OutputName for the ROOT file name
     man->OpenFile(outputFileName.c_str());
+    
+    PassArgs->ResetTotalEnergyByParticleAndEvent();
 
 }
 void MyRunAction::EndOfRunAction(const G4Run* run)
 {
-        G4cout << "### END OF RUN" << G4endl;
+    G4cout << "### END OF RUN" << G4endl;
 
     G4AnalysisManager* man = G4AnalysisManager::Instance();
 
     // Retrieve data from the sensitive detector (this assumes your sensitive detector is properly set up)
-    //MySensitiveDetector* sensDetector = (MySensitiveDetector*)G4SDManager::GetSDMpointer()->FindSensitiveDetector("MySensitiveDetector");
+    // MySensitiveDetector* sensDetector = (MySensitiveDetector*)G4SDManager::GetSDMpointer()->FindSensitiveDetector("MySensitiveDetector");
 
     if (PassArgs) {
         // Iterate over all hit records and store them in the ROOT file
@@ -84,19 +86,32 @@ void MyRunAction::EndOfRunAction(const G4Run* run)
             man->AddNtupleRow(0);
         }
 
-        // Optionally store total energy by particle type and print to the screen
-        const auto& totalEnergyByParticle = PassArgs->GetTotalEnergyByParticle(); // Add a getter to MyG4Args for totalEnergyByParticle
-        G4cout << "Total energy deposited by each particle type:" << G4endl;
-        for (const auto& energyEntry : totalEnergyByParticle) {
-            G4cout << "Particle type: " << energyEntry.first << ", "
-                   << "Total energy: " << energyEntry.second / MeV << " MeV" << G4endl;
-        }
+        G4int lastEventNumber = run->GetNumberOfEvent() - 1;
+        G4cout << "Last event number: " << lastEventNumber << G4endl;
+
+		// Get the entire map for total energy by particle and event
+		const auto& totalEnergyMap = PassArgs->GetTotalEnergyByParticleAndEventAll();
+
+		// Iterate through the entire map
+		for (const auto& eventEntry : totalEnergyMap) {
+			G4int eventNumber = eventEntry.first;  // Event number
+			const auto& energyByParticle = eventEntry.second;  // Energy by particle type for this event
+
+			// Print event number
+			G4cout << "Event number: " << eventNumber << G4endl;
+
+			// Iterate through the energy data for each particle type in this event
+			for (const auto& energyEntry : energyByParticle) {
+				G4cout << "  Particle type: " << energyEntry.first << ", "
+					   << "Total energy deposited: " << energyEntry.second / MeV << " MeV" << G4endl;
+			}
+		}
     } else {
         // If MyG4Args is not accessible, print an error message
         G4cout << "Error: MyG4Args instance not found or accessible!" << G4endl;
     }
 
-    man->Write();// Write out the root file to avoid damaging it
+    // Write out the ROOT file to avoid damaging it
+    man->Write();
     man->CloseFile();
-
 }

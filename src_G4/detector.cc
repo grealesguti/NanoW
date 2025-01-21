@@ -46,7 +46,10 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
 
         // Accumulate the energy deposited by each particle type
         //totalEnergyByParticle[particleType] += edep;
-		PassArgs->AddToEnergyByParticle(particleType, edep);
+		// Get the event number
+        G4int eventNumber = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+        
+		PassArgs->AddToEnergyByParticleAndEvent(particleType, edep, eventNumber);
 		
     }
     

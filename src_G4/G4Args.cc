@@ -34,9 +34,10 @@ MyG4Args::~MyG4Args() {
     // No dynamic memory to clean up
 }
 
-// Add energy deposition to the total for the given particle type
-void MyG4Args::AddToEnergyByParticle(const G4String& particleType, G4double energyDeposit) {
-    totalEnergyByParticle[particleType] += energyDeposit;
+// Add energy deposition to the total for the given particle type and event number
+void MyG4Args::AddToEnergyByParticleAndEvent(const G4String& particleType, G4double energyDeposit, G4int eventNumber) {
+    // Store energy deposit for the specific event number
+    totalEnergyByParticleAndEvent[eventNumber][particleType] += energyDeposit;
 }
 
 // Create a new hit record and append it to the hitRecords vector
@@ -44,4 +45,12 @@ void MyG4Args::AddHitRecord(const G4double energyDeposit, const G4ThreeVector& p
                             const G4double time, const G4String& particleType) {
     HitData newHit = {energyDeposit, position, time, particleType};
     hitRecords.push_back(newHit);
+}
+
+
+void MyG4Args::ResetTotalEnergyByParticleAndEvent() {
+    // Clear the entire map, removing all its contents
+    totalEnergyByParticleAndEvent.clear();
+
+    G4cout << "Total energy by particle and event has been reinitialized (cleared)." << G4endl;
 }
