@@ -17,7 +17,7 @@ public:
     
 private:
     G4ParticleGun *fParticleGun;
-	//MyG4Args* PassArgs;
+	MyG4Args* PassArgs;
 };
 
 #endif

@@ -17,4 +17,9 @@ void MyActionInitialization::Build() const
     // Actions performed at begining and end of a run
     MyRunAction *runAction = new MyRunAction(PassArgs);
     SetUserAction(runAction);
+    
+    // Actions at the begining and end of each event in a runs
+    MyEventAction *eventAction = new MyEventAction(runAction,PassArgs);
+    SetUserAction(eventAction);
+    
 }

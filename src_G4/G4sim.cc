@@ -19,41 +19,50 @@ if you uncomment one line (/microelectronics/det/setMat) into the .mac file.
     
     runManager->Initialize();
 
+
+// Check if a number of events is specified
+if (G4Args->GetRunevt() > 0) {
+    // Run the specified number of events
+    G4int numberOfEvents = G4Args->GetRunevt();
+    G4cout << "### Running " << numberOfEvents << " events." << G4endl;
+    runManager->BeamOn(numberOfEvents);
+} else {
+    // Initialize the GUI
     G4UIExecutive *ui = new G4UIExecutive(mainargc, mainargv);
-    
+
+    // Initialize the visualization manager
     G4VisManager *visManager = new G4VisExecutive();
     visManager->Initialize();
-    
+
+    // Get the UI manager and apply visualization commands
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
-    
-	// Open the visualization
-	UImanager->ApplyCommand("/vis/open OGL");
-	// Set the viewpoint
-	UImanager->ApplyCommand("/vis/viewer/set/viewpointVector -1 0 0");
-	// Draw the volumes
-	UImanager->ApplyCommand("/vis/drawVolume");
-	// Set auto-refresh to true
-	UImanager->ApplyCommand("/vis/viewer/set/autoRefresh true");
-	// Add trajectories to the scene (smooth rendering)
-	UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
-	// Accumulate the end-of-event action
-	UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
-	// Add the coordinate axes (e.g., with length 1 meter)
-	UImanager->ApplyCommand("/vis/scene/add/axes");
 
+    // Open the visualization and set up the scene
+    UImanager->ApplyCommand("/vis/open OGL");
+    UImanager->ApplyCommand("/vis/viewer/set/viewpointVector -1 0 0");
+    UImanager->ApplyCommand("/vis/drawVolume");
+    UImanager->ApplyCommand("/vis/viewer/set/autoRefresh true");
+    UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
+    UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
+    UImanager->ApplyCommand("/vis/scene/add/axes");
 
-	// --- Additional commands to plot dots at step endpoints ---
-	UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge generic-0");
-	UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setDrawStepPts true");
-	UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsSize 10");
+    // Configure step point visualization
+    UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge generic-0");
+    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setDrawStepPts true");
+    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsSize 10");
+    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargePos red");
+    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeNeg blue");
+    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeZero green");
 
-// Example for a conditionally colored step point
-UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargePos red");   // Positive charge -> red
-UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeNeg blue");   // Negative charge -> blue
-UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeZero green");  // Zero charge -> green
-
-    
+    // Start the UI session
     ui->SessionStart();
+
+    //delete ui;  // Clean up after the session
+}
+
+// Clean up the visualization manager
+//delete visManager;
+
 
 }
 G4simulation::~G4simulation()

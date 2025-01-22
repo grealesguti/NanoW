@@ -50,8 +50,10 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
         G4int eventNumber = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
         
 		PassArgs->AddToEnergyByParticleAndEvent(particleType, edep, eventNumber);
+		PassArgs->AddCurrentEvtEdep(edep);
 		
     }
+
     
     return true;
 }

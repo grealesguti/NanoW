@@ -25,15 +25,22 @@ MyG4Args::MyG4Args(int mainargc, char** mainargv) {
 		if (strcmp(mainargv[j], "-rndgun") == 0) {
 			randomGunLocation = true;
 			G4cout << "### Random particle location activated." << G4endl;
-		}
+		}else if(strcmp(mainargv[j],"-runevt")==0)
+                {   
+                    runevt=atoi(mainargv[j+1]);j=j+1;
+                    G4cout<< " ### Run "<< runevt <<" evts" <<G4endl;     
+                        
+                }else if(strcmp(mainargv[j],"-Allrecord")==0)
+                {   
+                    Allrecord=true;
+                    G4cout<< " ### Allrecord true, storing all impacts even in Edep==0 (needed for storing impact initial point)" <<G4endl;     
+                        
+                }
 			
         
     }
 
-    if (OutName.empty()) {
-        G4cerr << "### Warning: Output name not provided. Using default value." << G4endl;
-        OutName = "default_output";
-    }
+
 }
 
 // Destructor
@@ -60,4 +67,11 @@ void MyG4Args::ResetTotalEnergyByParticleAndEvent() {
     totalEnergyByParticleAndEvent.clear();
 
     G4cout << "Total energy by particle and event has been reinitialized (cleared)." << G4endl;
+}
+
+// Implementation of StorePosition
+void MyG4Args::StorePosition(const G4ThreeVector& position) {
+    // Add the position to the hitRecords with default or placeholder values for other fields
+    gunpositions.push_back(position);
+
 }
