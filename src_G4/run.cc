@@ -10,7 +10,7 @@ MyRunAction :: MyRunAction(MyG4Args *MainArgs)
     OutputName=MainArgs->GetOutName();
     PassArgs = MainArgs;
 
-    G4AnalysisManager *man = G4AnalysisManager::Instance();
+    G4GenericAnalysisManager *man = G4GenericAnalysisManager::Instance();
 
     // Content of output.root (tuples created only once in the constructor)
             man->CreateNtuple("Hits","Hits");   
@@ -53,7 +53,7 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
     G4cout<<" Random number: " << rand << G4endl;
 
 
-    G4AnalysisManager *man = G4AnalysisManager::Instance();
+    G4GenericAnalysisManager *man = G4GenericAnalysisManager::Instance();
 
     // Get current Event number 
     G4int runID = run->GetRunID();
@@ -79,7 +79,7 @@ void MyRunAction::EndOfRunAction(const G4Run* run)
 {
     G4cout << "### END OF RUN" << G4endl;
 
-    G4AnalysisManager* man = G4AnalysisManager::Instance();
+    G4GenericAnalysisManager* man = G4GenericAnalysisManager::Instance();
 	if (!man) {
 		G4cout << "Error: AnalysisManager instance is null!" << G4endl;
 		return;

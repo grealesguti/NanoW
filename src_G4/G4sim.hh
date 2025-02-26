@@ -1,10 +1,16 @@
 #ifndef G4SIM_HH
 #define G4SIM_HH
 
+
+//#include "G4RunManager.hh"
+#include "G4MTRunManager.hh"
+#include "G4UImanager.hh"
+#include "G4VisManager.hh"
+#include "G4VisExecutive.hh"
+#include "G4UIExecutive.hh"
+
 // Include necessary standard and Geant4 headers
 #include <iostream> // For input/output operations
-#include "G4RunManager.hh" // Class for managing the simulation run
-#include "G4UImanager.hh" // Class for user interface management
 
 // Include Geant4 headers for visualization
 #include "G4VisManager.hh" // Class for managing visualization
@@ -17,7 +23,7 @@
 #include "action.hh"
 #include <cstdlib> // For standard library functions
 #include <unistd.h> // For exit() function
-#include "MicroElecPhysics.hh"
+//#include "MicroElecPhysics.hh"
 #include "G4Args.hh"
 
 // Declare the G4simulation class

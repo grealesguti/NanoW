@@ -4,7 +4,9 @@
 // Include necessary Geant4 headers for event actions and analysis
 #include "G4UserEventAction.hh" // Base class for user event actions
 #include "G4Event.hh" // Class representing an event in Geant4
-#include "G4AnalysisManager.hh" // Class for managing analysis of simulation data
+//#include "G4AnalysisManager.hh" // Class for managing analysis of simulation data
+#include "G4GenericAnalysisManager.hh"
+
 #include "G4UImanager.hh" // Class for user interface management
 #include "G4SystemOfUnits.hh" // System of units for Geant4
 #include "G4PhysicsOrderedFreeVector.hh" // Class for ordered free vector of physics processes

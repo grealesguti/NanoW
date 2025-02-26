@@ -11,9 +11,10 @@
 
 // Include standard C++ headers
 #include <string.h> // For string manipulation functions
-#include "G4AnalysisManager.hh" // Class for managing analysis tools
+//#include "G4AnalysisManager.hh" // Class for managing analysis tools
+#include "G4GenericAnalysisManager.hh"
 
-#include "G4AnalysisManager.hh"
+//#include "G4AnalysisManager.hh"
 #include "G4Run.hh" // Base class for run actions
 #include "G4String.hh"
 #include "G4SystemOfUnits.hh"

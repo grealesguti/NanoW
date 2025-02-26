@@ -4,7 +4,8 @@
 // Include necessary Geant4 headers for sensitive detectors and analysis
 #include "G4VSensitiveDetector.hh" // Base class for sensitive detectors in Geant4
 #include "G4RunManager.hh" // Class for managing the simulation run
-#include "G4AnalysisManager.hh" // Class for managing analysis of simulation data
+//#include "G4AnalysisManager.hh" // Class for managing analysis of simulation data
+#include "G4GenericAnalysisManager.hh"
 #include "G4SystemOfUnits.hh" // System of units for Geant4
 #include "G4PhysicsOrderedFreeVector.hh" // Class for ordered free vector of physics processes
 #include "G4GenericMessenger.hh" // Class for handling command-line arguments
