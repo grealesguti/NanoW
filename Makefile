@@ -1,8 +1,8 @@
 CC=gcc
 CXX=g++
 LD=g++
-CXXFLAGS=-fdiagnostics-color -O2 -g $(shell geant4-config --cflags) -I/home/gmsh/include -I$(shell geant4-config --prefix)/include
-LDLIBS=-Wl,--copy-dt-needed-entries -fdiagnostics-color -lm $(shell geant4-config --libs) -L/home/gmsh/lib -lgmsh
+CXXFLAGS=-fdiagnostics-color -O2 -g $(shell geant4-config --cflags) -I/home/gmsh/include -I$(shell geant4-config --prefix)/include -I/opt/G4CMP/G4CMP-install/include/G4CMP
+LDLIBS=-Wl,--copy-dt-needed-entries -fdiagnostics-color -lm $(shell geant4-config --libs) -L/home/gmsh/lib -lgmsh -L/opt/G4CMP/G4CMP-install/lib -lG4cmp
 
 PWD=$(shell pwd)
 
