@@ -55,25 +55,28 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	VacuumMat->SetMaterialPropertiesTable(mptVacuum);
 
     
-	G4cout<< " ### - Define Cu" <<G4endl;    
+	G4cout << " ### - Define Cu" << G4endl;    
 	CuMat = nist->FindOrBuildMaterial("G4_Cu");
-		G4MaterialPropertiesTable *mptCu = new G4MaterialPropertiesTable();
-		G4double energyCu[2] = {2*eV, 6*eV};
-		G4double rindexCu[2] = {0.7, 1};
-		G4double ABSCu[2] = {1.68e-9*m, 1.68e-9*m};
-		mptCu->AddProperty("RINDEX", energyCu, ABSCu, 2);
-		mptCu->AddProperty("ABSLENGTH", energyCu, ABSCu, 2);
-		CuMat->SetMaterialPropertiesTable(mptCu);
-	
-	G4cout<< " ### - Define Al" <<G4endl;    
-    AlMat = nist->FindOrBuildMaterial("G4_Al");
-		G4MaterialPropertiesTable *mptAl = new G4MaterialPropertiesTable();
-		G4double energyAl[2] = {400*eV, 1000*eV};
-		G4double rindexAl[2] = {0.99, 0.99};
-		G4double ABSAl[2] = {6.6e-9*m, 6.63e-9*m};
-		mptAl->AddProperty("RINDEX", energyAl, ABSAl, 2);
-		mptAl->AddProperty("ABSLENGTH", energyAl, ABSAl, 2);
-		AlMat->SetMaterialPropertiesTable(mptAl);
+	G4MaterialPropertiesTable *mptCu = new G4MaterialPropertiesTable();
+
+	// Valores realistas para el índice de refracción del cobre en el rango de 2-6 eV
+	G4double energyCu[2] = {2*eV, 6*eV};
+	G4double realRindexCu[2] = {0.271, 0.238};  // Parte real del índice de refracción
+	G4double imagRindexCu[2] = {3.56, 4.24};    // Parte imaginaria para la absorción
+
+	mptCu->AddProperty("REALRINDEX", energyCu, realRindexCu, 2);
+	mptCu->AddProperty("IMAGINARYRINDEX", energyCu, imagRindexCu, 2);
+
+	CuMat->SetMaterialPropertiesTable(mptCu);
+		G4cout<< " ### - Define Al" <<G4endl;    
+		AlMat = nist->FindOrBuildMaterial("G4_Al");
+			G4MaterialPropertiesTable *mptAl = new G4MaterialPropertiesTable();
+			G4double energyAl[2] = {400*eV, 1000*eV};
+			G4double rindexAl[2] = {0.99, 0.99};
+			G4double ABSAl[2] = {6.6e-9*m, 6.63e-9*m};
+			mptAl->AddProperty("RINDEX", energyAl, ABSAl, 2);
+			mptAl->AddProperty("ABSLENGTH", energyAl, ABSAl, 2);
+			AlMat->SetMaterialPropertiesTable(mptAl);
    
   // https://refractiveindex.info/?shelf=main&book=Si3N4&page=Kischkat
   // https://refractiveindex.info/?shelf=main&book=Si3N4&page=Luke
