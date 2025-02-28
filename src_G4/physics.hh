@@ -9,7 +9,7 @@
 #include "G4RadioactiveDecayPhysics.hh" // Radioactive decay physics
 #include "G4StepLimiterPhysics.hh" // Step limiter physics
 #include "G4EmLivermorePhysics.hh"
-
+#include "G4CMPPhysicsList.hh"
 class MyPhysicsList : public G4VModularPhysicsList
 {
 public:

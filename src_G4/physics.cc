@@ -9,9 +9,14 @@ MyPhysicsList::MyPhysicsList()
     RegisterPhysics(new G4DecayPhysics());
     RegisterPhysics(new G4RadioactiveDecayPhysics()); // For radioactive decay
     RegisterPhysics(new G4EmLivermorePhysics()); // For low energy photons
-
+    // Add G4CMPPhysicsList
+    //G4CMPPhysicsList* cmpPhysics = new G4CMPPhysicsList();
+    //cmpPhysics->SetCuts();
+    //RegisterPhysics(cmpPhysics);
 	//RegisterPhysics(new G4MicroElecPhysics());
-	
+    //G4VUserPhysicsList* physics = new G4CMPPhysicsList();
+    //physics->SetCuts();
+    //runManager->SetUserInitialization(physics);
     G4StepLimiterPhysics* stepLimitPhys = new G4StepLimiterPhysics();
     stepLimitPhys->SetApplyToAll(true); // activates step limit for ALL particles
     RegisterPhysics(stepLimitPhys);

@@ -1,4 +1,10 @@
 #include "G4sim.hh"
+#include "G4CMPPhysicsList.hh"
+#include "G4CMPConfigManager.hh"
+//#include "PhononConfigManager.hh"
+
+
+
 
 G4simulation::G4simulation(int mainargc,char** mainargv)
 {
@@ -7,6 +13,10 @@ G4simulation::G4simulation(int mainargc,char** mainargv)
 
     
     runManager->SetUserInitialization(new MyDetectorConstruction(G4Args));
+	 G4VUserPhysicsList* physics = new G4CMPPhysicsList();
+	 physics->SetCuts();
+	 runManager->SetUserInitialization(physics);
+    
     runManager->SetUserInitialization(new MyPhysicsList());
     //runManager->SetUserInitialization(new MicroElecPhysics());
     /*
@@ -19,7 +29,9 @@ if you uncomment one line (/microelectronics/det/setMat) into the .mac file.
     
     runManager->Initialize();
 
-
+ // Create configuration managers to ensure macro commands exist
+ G4CMPConfigManager::Instance();
+ //PhononConfigManager::Instance();
 // Check if a number of events is specified
 if (G4Args->GetRunevt() > 0) {
     // Run the specified number of events
