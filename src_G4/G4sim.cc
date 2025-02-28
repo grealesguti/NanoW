@@ -57,14 +57,23 @@ if (G4Args->GetRunevt() > 0) {
     UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
     UImanager->ApplyCommand("/vis/scene/add/axes");
+	UImanager->ApplyCommand("/tracking/verbose 1");
+	UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
+UImanager->ApplyCommand("/vis/modeling/trajectories/create smooth");
+UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge");
+UImanager->ApplyCommand("/tracking/verbose 2");
+UImanager->ApplyCommand("/process/verbose 2");
+UImanager->ApplyCommand("/run/verbose 2");
+
+
 
     // Configure step point visualization
-    UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge generic-0");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setDrawStepPts true");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsSize 10");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargePos red");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeNeg blue");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeZero green");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge generic-0");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setDrawStepPts true");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsSize 10");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargePos red");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeNeg blue");
+    //UImanager->ApplyCommand("/vis/modeling/trajectories/generic-0/default/setStepPtsColour chargeZero green");
 
     // Start the UI session
     ui->SessionStart();
