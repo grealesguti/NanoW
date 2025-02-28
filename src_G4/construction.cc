@@ -147,27 +147,39 @@ void MyDetectorConstruction::DefineMaterials(){
 
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
 {
+	
+	if (fConstructed) {
+		if (!G4RunManager::IfGeometryHasBeenDestroyed()) {
+		  // Run manager hasn't cleaned volume stores. This code shouldn't execute
+		  G4GeometryManager::GetInstance()->OpenGeometry();
+		  G4PhysicalVolumeStore::GetInstance()->Clean();
+		  G4LogicalVolumeStore::GetInstance()->Clean();
+		  G4SolidStore::GetInstance()->Clean();
+			}
+			// Have to completely remove all lattices to avoid warning on reconstruction
+			G4LatticeManager::GetLatticeManager()->Reset();
+			// Clear all LogicalSurfaces
+			// NOTE: No need to redefine the G4CMPSurfaceProperties
+			G4CMPLogicalBorderSurface::CleanSurfaceTable();
+	  }
+	
 	DefineMaterials();
-
 	//////////////////
 	// Construction //
 	//////////////////
 
 	//////////////////
-	// World //
+	// World // Big Box with vacuum where the rest of parts are created, outside the cryostat vacuum avoids further modification of the particle trajectory
 	G4double WorldL = 0.127*2.2; //((0.02+0.01+0.02)*2+0.006);
     G4Box *solidWorld = new G4Box("solidWorld", WorldL/2*m, WorldL/2*m, WorldL/2*m);
-    //G4Box *solidWorld = new G4Box("solidWorld", ((0.02+0.01+0.02)*2+0.006)*m, ((0.02+0.01+0.02)*2+0.006)*m, ((0.02+0.01+0.02)*2+0.006)*m);
-
     G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, VacuumMat, "logicWorld");
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
 	//////////////////
-    // Define the radiator as a cylinder 
+    // Define the cryostat as a cylinder. The cryostat is composed of 2 cylindrical alumimium capsules
+    // *TODO: Radiator is a historical name for these components and has nothing to do with its current nature
     G4double innerRadius = 0.114338 * m;  // Cylinder with no inner radius (solid cylinder)
     G4double outerRadius = 0.114846* m; // Radius of the cylinder
-    //innerRadius = 0.05 * m;  // Cylinder with no inner radius (solid cylinder)
-    //outerRadius = 0.06* m; // Radius of the cylinder
     
     G4double innerRadiusShield2 = 0.124155 * m;  // Cylinder with no inner radius (solid cylinder)
     G4double outerRadiusShield2 = 0.127* m; // Radius of the cylinder
@@ -190,6 +202,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 
 	//////////////////
 	// Copper holder
+	// Holder of the sensing device in L shaped copper. It is still unknown how exactly this is attached!!!
 	solidCu1 = new G4Box("solidCu1", 6*mm/2, 6*mm/2-1*mm, 2*mm/2);
 	logicCu1 = new G4LogicalVolume(solidCu1, CuMat, "logicCu1");
 	physCu1 = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),logicCu1,"physCu1",logicWorld,false,0,true);
@@ -197,12 +210,11 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	logicCu2 = new G4LogicalVolume(solidCu2, CuMat, "logicCu2");
 	physCu2 = new G4PVPlacement(0,G4ThreeVector(0,3.,2),logicCu2,"physCu2",logicWorld,false,0,true);
 	
-	
 	G4UserLimits* userLimits = new G4UserLimits();
 	userLimits->SetMaxAllowedStep(0.1 * mm);
 		
 	//////////////////
-	// Substrate 
+	// Contact material btw the copper holder and the sensor (UNKNOWN!!!)
 	G4double Sensor_z = -1 *mm;
 	G4double Substrate_z = 0.5 * mm;
 	G4double Sensor_x = 1 * mm;
@@ -223,6 +235,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 
 	//////////////////
 	// SiO2 top layer
+	// Protective layer over the sensor
 	G4double SiO2_z = 40 * nm;
 	G4Box *solid_SiO2toplayer = new G4Box("solid_SiO2toplayer", Sensor_x*mm/2, Sensor_y*mm/2, SiO2_z*mm/2);
 	G4LogicalVolume *logic_SiO2toplayer = new G4LogicalVolume(solid_SiO2toplayer, SiO2, "logic_SiO2toplayer");
@@ -238,22 +251,6 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		true
 	);
 
-	//////////////////
-	// aSi top single layer
-	/*
-	G4double aSi_z = 3 * nm;
-	G4Box *solid_aSitoplayer = new G4Box("solid_aSitoplayer", Sensor_x/2, Sensor_y/2, aSi_z/2);
-	G4LogicalVolume *logic_aSitoplayer = new G4LogicalVolume(solid_aSitoplayer, aSiMat, "logic_aSitoplayer");
-	G4VPhysicalVolume *phys_aSitoplayer = new G4PVPlacement(
-		0,
-		G4ThreeVector(0., 0., Sensor_z-Substrate_z-SiO2_z-aSi_z/2),
-		logic_aSitoplayer,
-		"phys_aSitoplayer",
-		logicWorld,
-		false,
-		0,
-		true
-	);*/
 
 	//////////////////
 	// Sensor
@@ -261,7 +258,11 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4double wire_x = Sensor_x*0.9;
 	G4double strip_thickness  = 2250 *nm;
 	G4double strip_spacing = 1500 *nm;
-	/*
+	G4int num_strips = 240; // Number of strips
+	G4UserLimits* userLimits1 = new G4UserLimits();
+	userLimits1->SetMaxAllowedStep(0.05 * nm);
+	
+	/* // Testing code for a single strip geometry
 	G4Box *solid_sensor = new G4Box("solid_sensor", Sensor_x*0.9/2, Sensor_y*0.9/2, wire_z*mm/2);
 	G4LogicalVolume *logic_sensor = new G4LogicalVolume(solid_sensor, WSiMat, "logic_sensor");
 	G4VPhysicalVolume *phys_sensor = new G4PVPlacement(
@@ -274,13 +275,12 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		0,
 		true
 	);
-	*/
-	G4int num_strips = 240; // Number of strips
-	G4UserLimits* userLimits1 = new G4UserLimits();
-	userLimits1->SetMaxAllowedStep(0.05 * nm);
+	*/	
 	
 	MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector",PassArgs);
 	
+	
+	// Loop for the creation of the sensor and substrate in form of lines uniformly distributed
 	for (G4int i = 0; i < num_strips; i++) {
 		// Position along y for each strip, considering the thickness and the spacing
 		G4double strip_y_pos = -(Sensor_y * 0.9 / 2) + i * (strip_thickness + strip_spacing); 
@@ -319,13 +319,10 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 			"phys_aSistrip_" + std::to_string(i),
 			logic_SiO2toplayer,
 			false,
-			i, // Unique copy number for each strip
+			i, // Unique copy number for each strip 
 			true
 		);		
 	}
-	
-
-	
 		
 	//ConstructSDandField(); 
 
@@ -338,7 +335,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
     //userLimits = new G4UserLimits(maxStep);
     //logicsubstrate->SetUserLimits(userLimits);
     
-
+  fConstructed = true;
     
     
     return physWorld;
