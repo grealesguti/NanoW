@@ -58,8 +58,8 @@ private:
 
     G4OpticalSurface *mirrorSurface;
 
-    G4Material *SiO2, *H2O, *Aerogel, *worldMat, *NaI, *Air[10], *AirMat, *CuMat, *AlMat, *aSiMat, *WSiMat;
-    G4Element *C, *Na, *I;
+    G4Material *SiO2, *H2O, *Aerogel, *worldMat, *NaI, *Air[10], *AirMat, *CuMat, *AlMat, *aSiMat, *WSiMat, *Si3N4Mat, *VacuumMat, *fLiquidHelium, *fGermanium, *fAluminum, *fTungsten;
+        G4Element *C, *Na, *I;
 
     //void DefineMaterials();
     //virtual void ConstructSDandField();
@@ -73,6 +73,9 @@ private:
     G4bool isCherenkov, isScintillator, isTOF, isAtmosphere;
         virtual void ConstructSDandField(); // SD==Sensitive Detector
     MyG4Args* PassArgs;
+    void DefineMaterials(); // Define material properties
+
+    
 
 };
 
