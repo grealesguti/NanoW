@@ -22,4 +22,7 @@ void MyActionInitialization::Build() const
     MyEventAction *eventAction = new MyEventAction(runAction,PassArgs);
     SetUserAction(eventAction);
     
+ // SetUserAction(new PhononPrimaryGeneratorAction);
+ // SetUserAction(new G4CMPStackingAction);
+    
 }

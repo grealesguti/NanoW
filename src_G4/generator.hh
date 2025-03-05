@@ -7,6 +7,9 @@
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleTable.hh"
 #include "G4Args.hh"
+#include "globals.hh"
+//#include "G4VUserPrimaryGeneratorAction.hh"
+
 class MyPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
 public:

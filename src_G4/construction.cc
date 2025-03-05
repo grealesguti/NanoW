@@ -8,12 +8,6 @@ MyDetectorConstruction::MyDetectorConstruction(MyG4Args *MainArgs)
 MyDetectorConstruction::~MyDetectorConstruction()
 {}
 
-void MyDetectorConstruction::ConstructSDandField()
-{
-
-}
-
-
 void MyDetectorConstruction::DefineMaterials(){ 
   G4NistManager* nistManager = G4NistManager::Instance();
 

@@ -1,7 +1,6 @@
 #include "G4sim.hh"
 #include "G4CMPPhysicsList.hh"
 #include "G4CMPConfigManager.hh"
-//#include "PhononConfigManager.hh"
 
 
 
@@ -31,7 +30,7 @@ if you uncomment one line (/microelectronics/det/setMat) into the .mac file.
 
  // Create configuration managers to ensure macro commands exist
  G4CMPConfigManager::Instance();
- //PhononConfigManager::Instance();
+ PhononConfigManager::Instance();
 // Check if a number of events is specified
 if (G4Args->GetRunevt() > 0) {
     // Run the specified number of events

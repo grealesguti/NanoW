@@ -6,6 +6,8 @@
 #include "generator.hh"
 #include "run.hh"
 #include "event.hh"
+#include "G4CMPStackingAction.hh"
+//#include "PhononPrimaryGeneratorAction.hh"
 
 
 class MyActionInitialization : public G4VUserActionInitialization

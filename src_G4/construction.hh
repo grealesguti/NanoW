@@ -61,6 +61,8 @@
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
+#include "PhononSensitivity.hh"
+
 
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -96,7 +98,6 @@ private:
     G4int nRows, nCols, two;
 
     G4bool isCherenkov, isScintillator, isTOF, isAtmosphere;
-        virtual void ConstructSDandField(); // SD==Sensitive Detector
     MyG4Args* PassArgs;
     void DefineMaterials(); // Define material properties
 	//void SetupGeometry();
