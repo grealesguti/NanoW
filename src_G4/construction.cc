@@ -166,7 +166,17 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	// World // Big Box with vacuum where the rest of parts are created, outside the cryostat vacuum avoids further modification of the particle trajectory
 	G4double WorldL = 0.127*2.2; //((0.02+0.01+0.02)*2+0.006);
     G4Box *solidWorld = new G4Box("solidWorld", WorldL/2*m, WorldL/2*m, WorldL/2*m);
-    G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, VacuumMat, "logicWorld");
+    G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, VacuumMat, "logicWorld");  
+	// * Change from Phonon - G4CMP
+	logicWorld->SetUserLimits(new G4UserLimits(10*mm, DBL_MAX, DBL_MAX, 0, 0)); 
+	// DBL_MAX is a constant defined in the C++ standard library, specifically in the <cfloat> (or <float.h>) header. It represents the maximum finite value that a double type can have.
+	/* This line sets:
+	10*mm: Maximum step size (limits how far a particle can travel in a single step).
+	DBL_MAX: Maximum track length (effectively no limit).
+	DBL_MAX: Maximum time (effectively no limit).
+	0: Minimum kinetic energy (no threshold).
+	0: Minimum range (no threshold).
+	*/
     G4VPhysicalVolume *physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
 	//////////////////
@@ -232,7 +242,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	// Protective layer over the sensor
 	G4double SiO2_z = 40 * nm;
 	G4Box *solid_SiO2toplayer = new G4Box("solid_SiO2toplayer", Sensor_x*mm/2, Sensor_y*mm/2, SiO2_z*mm/2);
-	G4LogicalVolume *logic_SiO2toplayer = new G4LogicalVolume(solid_SiO2toplayer, SiO2, "logic_SiO2toplayer");
+	G4LogicalVolume *logic_SiO2toplayer = new G4LogicalVolume(solid_SiO2toplayer, fGermanium, "logic_SiO2toplayer");
 	logic_SiO2toplayer->SetUserLimits(userLimits);
 	G4VPhysicalVolume *phys_SiO2toplayer = new G4PVPlacement(
 		0,
@@ -244,6 +254,25 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		0,
 		true
 	);
+	
+			// Start Change from Phonon - G4CMP
+			  // G4LatticeManager gives physics processes access to lattices by volume
+			  G4LatticeManager* LM = G4LatticeManager::GetLatticeManager();
+			  LM->SetVerboseLevel(3);  // Set the verbose level to 3 for detailed logs
+			  
+			  G4cout << "Oper. 1" << G4endl;
+			  G4LatticeLogical* SiLogical = LM->LoadLattice(fGermanium, "Crystal"); 
+			  G4cout << "Oper. 2" << G4endl;
+
+			  // G4LatticePhysical assigns G4LatticeLogical a physical orientation
+			  G4LatticePhysical* SiPhysical = new G4LatticePhysical(SiLogical);
+			  G4cout << "Oper. 3" << G4endl;
+			  SiPhysical->SetMillerOrientation(1,0,0); 
+			  G4cout << "Oper. 4" << G4endl;
+			  LM->RegisterLattice(phys_SiO2toplayer, SiPhysical);
+			  G4cout << "Oper. 5" << G4endl;
+
+			// End Change from Phonon - G4CMP
 
 
 	//////////////////
@@ -290,6 +319,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		logicDetector->SetUserLimits(userLimits1);
 		logic_aSiStrip->SetUserLimits(userLimits1);
 		
+		
 		logicDetector->SetSensitiveDetector(sensDet);
 
 		// Place each strip with translation in the y-axis
@@ -306,7 +336,8 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 		
 
 		// Place each strip with translation in the y-axis
-		new G4PVPlacement(
+		  G4VPhysicalVolume* SiPhys =
+			new G4PVPlacement(
 			0, // No rotation
 			G4ThreeVector(0, strip_y_pos, +SiO2_z/2-wire_z-wire_z/2), // Translation in y for each strip
 			logic_aSiStrip,
@@ -316,6 +347,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 			i, // Unique copy number for each strip 
 			true
 		);		
+		
 	}
 		
 	//ConstructSDandField(); 
